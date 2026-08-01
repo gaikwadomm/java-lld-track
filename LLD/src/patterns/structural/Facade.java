@@ -1,3 +1,5 @@
+package patterns.structural;
+
 // Service class responsible for handling payments
 class PaymentService {
     public void makePayment(String accountId, double amount) {

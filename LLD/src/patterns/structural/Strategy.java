@@ -1,5 +1,4 @@
-import java.util.*;
-
+package patterns.structural;
 // Not that dynamic
 // // Class implementing Ride Matching Service
 // class RideMatchingService {

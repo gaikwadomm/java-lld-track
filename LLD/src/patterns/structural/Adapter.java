@@ -1,4 +1,4 @@
-import java.util.*;
+package patterns.structural;
 
 // Target Interface: 
 // Standard interface expected by the CheckoutService
