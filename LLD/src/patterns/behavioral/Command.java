@@ -1,6 +1,5 @@
 package patterns.behavioral;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 // Client Has Invoker (Remote)

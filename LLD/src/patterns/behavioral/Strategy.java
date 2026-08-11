@@ -1,4 +1,5 @@
-package patterns.structural;
+package patterns.behavioral;
+
 // Not that dynamic
 // // Class implementing Ride Matching Service
 // class RideMatchingService {
