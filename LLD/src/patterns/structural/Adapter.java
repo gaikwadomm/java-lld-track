@@ -1,3 +1,4 @@
+package patterns.structural;
 import java.util.*;
 
 // Target Interface: 
