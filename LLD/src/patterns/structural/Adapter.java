@@ -1,6 +1,4 @@
 package patterns.structural;
-import java.util.*;
-
 // Target Interface: 
 // Standard interface expected by the CheckoutService
 interface PaymentGateway {
