@@ -1,5 +1,4 @@
 package patterns.structural;
-
 // Target Interface: 
 // Standard interface expected by the CheckoutService
 interface PaymentGateway {
