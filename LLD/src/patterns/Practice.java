@@ -1,109 +1,218 @@
 package patterns;
 
+import java.lang.reflect.InvocationHandler;
 import java.util.*;
 
-interface Item{
-    // ItemVisitor is nothing but the 
-    // Specific operation that needs to 
-    // get applied base on the product / item type
-    void accept(ItemVisitor visitor);
-}
 
-class PhysicalProduct implements Item{
-    public String name;
-    public double weight;
+//------------------------------------------------
+// SINGLETON
+//------------------------------------------------
+class EagerLoading {
+    private static final EagerLoading instance = new EagerLoading();
 
-    public PhysicalProduct(String name, double weight){
-        this.name = name;
-        this.weight = weight;
+    private EagerLoading(){
+        System.out.println("Eager Loading Get Instantiated ");
     }
 
-    @Override
-    public void accept(ItemVisitor visitor){
-        visitor.visit(this);
+    public static EagerLoading getInstace(){
+        return instance;
     }
 }
 
-class DigitalProduct implements Item {
-    public String link;
-    public double downloadSize;
+class LazyLoading{
+    private static LazyLoading instance;
 
-    public DigitalProduct(String link, double size){
-        this.link = link;
-        this.downloadSize = size;
+    private LazyLoading(){
+
     }
 
-    @Override
-    public void accept(ItemVisitor visitor){
-        visitor.visit(this);
-    }
-}
-
-class GiftCard implements Item {
-    public String couponCode;
-
-    public GiftCard(String couponCode){
-        this.couponCode = couponCode;
-    }
-
-    @Override
-    public void accept(ItemVisitor visitor){
-        visitor.visit(this);
-    }
-}
-
-interface ItemVisitor{
-    void visit(PhysicalProduct itemType);
-    void visit(DigitalProduct itemType);
-    void visit(GiftCard itemType);
-} 
-
-class InvoiceGenerator implements ItemVisitor{
-    @Override
-    public void visit(PhysicalProduct itemType){
-        System.out.println("Physical Product Invoice : "+itemType.name+"!");
-    }
-    @Override
-    public void visit(DigitalProduct itemType){
-        System.out.println("Digital Product Invoice : Link "+itemType.link+"!");
-    }
-    @Override
-    public void visit(GiftCard itemType){
-        System.out.println("Gift Card Coupon Code : "+itemType.couponCode+"!");
-    }
-}
-class ShippingCost implements ItemVisitor{
-    @Override
-    public void visit(PhysicalProduct itemType){
-        System.out.println("Shipping Cost : "+(itemType.weight*10)+" for "+itemType.name+"!");
-    }
-    @Override
-    public void visit(DigitalProduct itemType){
-        System.out.println(itemType.link + " is digital -- No shipping cost.");
-    }
-    @Override
-    public void visit(GiftCard itemType){
-        System.out.println("GiftCard delivery via email -- No shipping cost.");
-    }
-}
-
-public class Practice{
-    public static void main(String args[]){
-        List<Item> items = new ArrayList<>();
-        items.add(new PhysicalProduct("Shoes", 1.2));
-        items.add(new DigitalProduct("Ebook", 100));
-        items.add(new GiftCard("TUF500"));
-
-        ItemVisitor invoiceGenerator = new InvoiceGenerator();
-        ItemVisitor shippingCalculator = new ShippingCost();
-
-        for (Item item : items) {
-            item.accept(invoiceGenerator);
-            item.accept(shippingCalculator);
-            
-            System.out.println("");
+    public static LazyLoading getInstace(){
+        if(instance==null){
+            return instance = new LazyLoading();
         }
+        return instance;
+    }  
+}
+
+class DoubleChkSync{
+    private static volatile DoubleChkSync instance;
+
+    private DoubleChkSync(){
+
+    }
+
+    public  static DoubleChkSync getInstace(){
+        if(instance==null){
+            synchronized(DoubleChkSync.class){
+                if(instance==null){
+                    instance = new DoubleChkSync();
+                }
+            }
+        }
+
+        return instance;
+    }
+}
+
+class BillPughSingleton{
+    private  BillPughSingleton(){
+
+    }
+
+    private static class CreateInstance{
+        private static final BillPughSingleton INSTANCE = new BillPughSingleton();
+    }
+
+    public static BillPughSingleton getInstance(){
+        return CreateInstance.INSTANCE;
+    }
+}
+
+//------------------------------------------------
+// FACTORY
+//------------------------------------------------
+
+interface TravelService{
+    void modeOfTravel();
+}
+
+class Air implements TravelService {
+    @Override 
+    public void modeOfTravel(){
+        System.out.println("You are travelling by Air Mode");
+    }
+}
+
+class Road implements TravelService{
+    @Override 
+    public  void modeOfTravel(){
+        System.out.println("You are travelling by Road Mode");
+    }
+}
+
+class TravelFactory {
+    public static TravelService getTravelMode(String mode){
+        if(mode.equalsIgnoreCase("AIR")){
+            return new Air();
+        }
+        else if(mode.equalsIgnoreCase("ROAD")){
+            return  new Road();
+        }
+        throw new IllegalArgumentException("Unknown Mode Provided : "+mode);
+    }
+}
+
+//------------------------------------------------
+// ABSTRACT FACTORY
+//------------------------------------------------
+
+interface PaymentGateway {
+    void processPayment();
+}
+interface Invoice{
+    void generateInvoice();
+}
+
+// India
+class RazorPayGateway implements  PaymentGateway{
+    @Override
+    public void processPayment() {
+        System.out.println("Razorpay Payment Processing");
+    }
+}
+class PayUGateway implements  PaymentGateway{
+    @Override
+    public void processPayment() {
+        System.out.println("PayU Payment Processing");
+    }
+}
+
+class GSTInvoice implements Invoice{
+    @Override
+    public void generateInvoice() {
+        System.out.println("GST Invoice Generated");
+    }
+}   
+
+// Usa
+class PayPal implements  PaymentGateway{
+    @Override
+    public void processPayment() {
+       System.out.println("PayPal Payment Processing"); 
+    }
+}
+class Stripe implements  PaymentGateway{
+    @Override
+    public void processPayment() {
+        System.out.println("Stripe Payment Processing");
+    }
+}
+class UsaInvoice implements Invoice{
+    @Override
+    public void generateInvoice() {
+        System.out.println("USA Invoice Generated");
     }
 }
 
 
+interface RegionalFactory{
+    PaymentGateway createPaymentGateway(String gatewayType);
+    Invoice createInvoice();
+}
+
+// INDIAN FACTORY;
+class IndiaFactory implements RegionalFactory {
+    @Override
+    public PaymentGateway createPaymentGateway(String getewayType) {
+        if(getewayType.equalsIgnoreCase("razorpay")){
+            return new RazorPayGateway();
+        }
+        else if(getewayType.equalsIgnoreCase("payu"));
+        throw new IllegalArgumentException("Invalid Gate Way Type : "+getewayType);
+    }
+
+    @Override
+    public Invoice createInvoice() {
+        return  new GSTInvoice();
+    }
+}
+
+class USFactory implements RegionalFactory {
+    public PaymentGateway createPaymentGateway(String gatewayType) {
+        if (gatewayType.equalsIgnoreCase("paypal")) {
+            return new PayPal();
+        } else if (gatewayType.equalsIgnoreCase("stripe")) {
+            return new Stripe();
+        }
+        throw new IllegalArgumentException("Unsupported gateway for US: " + gatewayType);
+    }
+ 
+    public Invoice createInvoice() {
+        return new UsaInvoice();
+    }
+}
+
+
+class CheckOutService{
+    private PaymentGateway paymentGateway;
+    private Invoice invoice;
+    private String gatewayType;
+
+    public CheckOutService(RegionalFactory factory, String gatewayType){
+        this.gatewayType = gatewayType;
+        this.paymentGateway = factory.createPaymentGateway(gatewayType);
+        this.invoice = factory.createInvoice();
+    }
+
+    public void completeOrder(double amount){
+        paymentGateway.processPayment();
+        invoice.generateInvoice();
+    }
+}
+
+public  class Practice{
+    public static void main(String args[]){
+        // Scanner sc= new Scanner(System.in);
+
+    }
+}
