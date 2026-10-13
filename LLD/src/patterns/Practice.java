@@ -450,7 +450,7 @@ class webPlayer extends videoPlayer {
     @Override 
     public void play(String title){
         System.out.println("Playing on Web");
-        super.qualtiy.display();
+        super.qualtiy.display(title);
     }
 }
 
