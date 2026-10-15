@@ -81,4 +81,85 @@ public class AdminService {
         System.out.println("[SERVICE] Added " + count + " slots to floor " + floorNumber);
     }
 
+    private void initializeDefaultPricingRules() {
+        System.out.println("[REPOSITORY] Initializing default pricing rules");
+        
+        PricingRule bikeRule = new PricingRule(Vehicle.VehicleType.BIKE, 10.0, 30.0);
+        PricingRule carRule = new PricingRule(Vehicle.VehicleType.CAR, 20.0, 60.0);
+        PricingRule truckRule = new PricingRule(Vehicle.VehicleType.TRUCK, 30.0, 90.0);
+        PricingRule evRule = new PricingRule(Vehicle.VehicleType.EV, 15.0, 45.0);
+        
+        pricingRuleRepository.save(bikeRule);
+        pricingRuleRepository.save(carRule);
+        pricingRuleRepository.save(truckRule);
+        pricingRuleRepository.save(evRule);
+    }
+
+    public void addFloorPublic(int floorNumber) {
+        addFloor(floorNumber);
+    }
+
+    public void addSlotsToFloorPublic(int floorNumber, Vehicle.VehicleType slotType, int count) {
+        addSlotsToFloor(floorNumber, slotType, count);
+    }
+
+
+    public void updatePricingRule(Vehicle.VehicleType vehicleType, double ratePerHour, double flatRate) {
+        System.out.println("[SERVICE] Updating pricing rule for " + vehicleType);
+        
+        PricingRule rule = pricingRuleRepository.findByVehicleType(vehicleType)
+            .orElseThrow(() -> new IllegalStateException("Pricing rule not found for " + vehicleType));
+        
+        rule.updateRates(ratePerHour, flatRate);
+        pricingRuleRepository.update(rule);
+        System.out.println("[SERVICE] Pricing rule updated successfully");
+    }
+    
+    public void updateFlatPricing(Vehicle.VehicleType vehicleType, double flatRate) {
+        System.out.println("[SERVICE] Updating flat pricing for " + vehicleType + " to " + flatRate);
+        
+        PricingRule rule = pricingRuleRepository.findByVehicleType(vehicleType)
+            .orElseThrow(() -> new IllegalStateException("Pricing rule not found for " + vehicleType));
+        
+        rule.updateFlatRate(flatRate);
+        pricingRuleRepository.update(rule);
+        System.out.println("[SERVICE] Flat pricing updated successfully");
+    }
+    
+    
+    public void updateHourlyPricing(Vehicle.VehicleType vehicleType, double ratePerHour) {
+        System.out.println("[SERVICE] Updating hourly pricing for " + vehicleType + " to " + ratePerHour);
+        
+        PricingRule rule = pricingRuleRepository.findByVehicleType(vehicleType)
+            .orElseThrow(() -> new IllegalStateException("Pricing rule not found for " + vehicleType));
+        
+        rule.updateHourlyRate(ratePerHour);
+        pricingRuleRepository.update(rule);
+        System.out.println("[SERVICE] Hourly pricing updated successfully");
+    }
+
+    public void addPricingRule(PricingRule rule) {
+        System.out.println("[SERVICE] Adding new pricing rule for " + rule.getVehicleType());
+        pricingRuleRepository.save(rule);
+        System.out.println("[SERVICE] Pricing rule added successfully");
+    }
+
+    public Map<String, Object> getParkingStatus() {
+        System.out.println("[SERVICE] Getting parking lot status");
+        
+        List<Floor> floors = floorRepository.findAll();
+        System.out.println("[SERVICE] Total floors: " + floors.size());
+        
+        for (Floor floor : floors) {
+            System.out.println("[SERVICE] Floor " + floor.getFloorNumber() + " has " + floor.getTotalSlots() + " slots");
+        }
+        
+        Map<Vehicle.VehicleType, Long> slotStats = slotRepository.getSlotStatistics();
+        System.out.println("[SERVICE] Slot statistics: " + slotStats);
+        
+        return Map.of(
+            "totalFloors", floors.size(),
+            "slotStatistics", slotStats
+        );
+    }
 }
