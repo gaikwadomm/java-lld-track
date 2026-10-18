@@ -1,4 +1,4 @@
-package multithreading.using_runnable_interface;
+package multithreading.threadcreation.using_runnable_interface;
 import java.util.*;
 
 class SmsTask implements Runnable {

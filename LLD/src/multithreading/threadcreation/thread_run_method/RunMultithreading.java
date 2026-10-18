@@ -1,7 +1,8 @@
-package multithreading.thread_run_method;
+package multithreading.threadcreation.thread_run_method;
 
 import java.util.*;
 class SmsThread extends Thread {
+    @Override 
     public void run(){
         try {
             Thread.sleep(3000);
@@ -13,6 +14,7 @@ class SmsThread extends Thread {
 }
 
 class EmailThread extends Thread {
+    @Override 
     public void run(){
         try {
             Thread.sleep(2000);
@@ -24,6 +26,7 @@ class EmailThread extends Thread {
 }
 
 class EtaCalcualation extends Thread {
+    @Override   
     public void run(){
         try {
             Thread.sleep(5000);

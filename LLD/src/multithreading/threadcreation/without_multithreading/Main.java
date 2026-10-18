@@ -1,4 +1,4 @@
-package multithreading.without_multithreading;
+package multithreading.threadcreation.without_multithreading;
 import java.util.*;
 
 // OrderService class
