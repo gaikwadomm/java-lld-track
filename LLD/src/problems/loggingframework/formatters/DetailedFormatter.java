@@ -1,4 +1,4 @@
-package problems.loggingframework.formatter;
+package problems.loggingframework.formatters;
 
 import problems.loggingframework.core.LogFormatter;
 import problems.loggingframework.core.LogMessage;

@@ -1,4 +1,4 @@
-package problems.loggingframework.filter;
+package problems.loggingframework.filters;
 
 
 import problems.loggingframework.core.LogFilter;
